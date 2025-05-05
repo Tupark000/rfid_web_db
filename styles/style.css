@@ -1,0 +1,22 @@
+.sidebar {
+    background-color: #b00020;
+    color: white;
+    width: 250px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    display: block;
+  }
+  .sidebar a:hover,
+  .sidebar .active {
+    background-color: #900018;
+  }
+  .logout {
+    padding: 15px 20px;
+  }
+  

@@ -1,4 +1,3 @@
-<!-- public/logs.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,16 @@
   <title>Daily Logs</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    body { background-color: #f4f6f9; margin: 0; }
+    body {
+      background-color: #f4f6f9;
+      margin: 0;
+    }
+
+    .dashboard-container {
+      display: flex;
+      height: 100vh;
+    }
+
     .sidebar {
       background-color: #b00020;
       color: white;
@@ -15,24 +23,33 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
     }
+
     .sidebar a {
       color: white;
       text-decoration: none;
       padding: 15px 20px;
       display: block;
     }
-    .sidebar a:hover, .sidebar .active {
+
+    .sidebar a:hover,
+    .sidebar .active {
       background-color: #900018;
     }
+
     .logout {
       padding: 15px 20px;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="d-flex">
+  <div class="dashboard-container">
+    <!-- Sidebar -->
     <div class="sidebar">
       <div>
         <h4 class="text-center mt-4 mb-2">TUPARK</h4>
@@ -40,28 +57,24 @@
         <a href="present.html">Present Guests</a>
         <a href="logs.html" class="active">Daily Logs</a>
       </div>
-      <a href="index.html" class="logout">Logout</a>
+      <div class="mt-auto">
+        <a href="index.html" class="logout">Logout</a>
+      </div>
     </div>
 
-    <div class="container mt-4">
-      <h3>Daily Logs</h3>
-      <div class="d-flex flex-wrap mb-3 gap-2">
-        <input type="date" class="form-control" id="dateFilter" style="max-width: 200px;" />
-        <input type="text" class="form-control" id="searchInput" placeholder="Search by name or plate..." style="max-width: 250px;" />
-        <button class="btn btn-secondary" onclick="filterLogs()">Filter</button>
+    <!-- Main Content -->
+    <div class="content container-fluid">
+      <div class="d-flex mb-3 gap-2">
+        <input type="date" id="dateFilter" class="form-control w-auto" />
+        <input type="text" id="searchBox" class="form-control w-auto" placeholder="Search by name or plate..." />
+        <button class="btn btn-secondary" onclick="filterTable()">Filter</button>
         <button class="btn btn-danger" onclick="window.print()">Print</button>
       </div>
+
+      <h3>Daily Logs</h3>
       <table class="table table-bordered bg-white">
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Plate</th>
-            <th>RFID UID</th>
-            <th>Time In</th>
-            <th>Time Out</th>
-            <th>Actions</th>
-          </tr>
+          <tr><th>Name</th><th>Status</th><th>Plate</th><th>RFID UID</th><th>Time In</th><th>Time Out</th><th>Actions</th></tr>
         </thead>
         <tbody id="logsTable"></tbody>
       </table>
@@ -72,25 +85,25 @@
     const role = sessionStorage.getItem("role");
     if (!role) window.location.href = "index.html";
 
-    let usersData = [];
+    let allUsers = [];
 
     fetch("/api/users")
       .then(res => res.json())
       .then(data => {
-        usersData = data;
-        renderTable(data);
+        allUsers = data;
+        renderTable(allUsers);
       });
 
-    function renderTable(data) {
+    function renderTable(users) {
       const table = document.getElementById("logsTable");
-      table.innerHTML = "";
-
-      data.forEach(user => {
+      table.innerHTML = '';
+      users.forEach(user => {
         const timeIn = new Date(user.time_in).toLocaleString();
         const timeOut = user.time_out ? new Date(user.time_out).toLocaleString() : "-";
-        const actions = role === "main"
-          ? `<button class="btn btn-warning btn-sm me-1">Edit</button><button class="btn btn-danger btn-sm">Delete</button>`
-          : `<button class="btn btn-outline-secondary btn-sm" disabled>View</button>`;
+        const actionButtons = role === "main"
+          ? `<button class="btn btn-warning btn-sm me-1">Edit</button>
+             <button class="btn btn-danger btn-sm">Delete</button>`
+          : '';
         table.innerHTML += `
           <tr>
             <td>${user.name}</td>
@@ -99,24 +112,21 @@
             <td>${user.rfid_uid}</td>
             <td>${timeIn}</td>
             <td>${timeOut}</td>
-            <td>${actions}</td>
-          </tr>
-        `;
+            <td>${actionButtons}</td>
+          </tr>`;
       });
     }
 
-    function filterLogs() {
+    function filterTable() {
       const date = document.getElementById("dateFilter").value;
-      const keyword = document.getElementById("searchInput").value.toLowerCase();
-
-      const filtered = usersData.filter(user => {
-        const matchDate = date ? new Date(user.time_in).toISOString().slice(0, 10) === date : true;
-        const matchSearch = keyword
-          ? user.name.toLowerCase().includes(keyword) || user.plate_number.toLowerCase().includes(keyword)
-          : true;
-        return matchDate && matchSearch;
+      const search = document.getElementById("searchBox").value.toLowerCase();
+      const filtered = allUsers.filter(user => {
+        const matchesSearch =
+          user.name.toLowerCase().includes(search) ||
+          user.plate_number.toLowerCase().includes(search);
+        const matchesDate = !date || new Date(user.time_in).toISOString().split("T")[0] === date;
+        return matchesSearch && matchesDate;
       });
-
       renderTable(filtered);
     }
   </script>

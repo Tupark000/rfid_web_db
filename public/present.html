@@ -1,4 +1,3 @@
-<!-- public/present.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,16 @@
   <title>Present Guests</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    body { background-color: #f4f6f9; margin: 0; }
+    body {
+      background-color: #f4f6f9;
+      margin: 0;
+    }
+
+    .dashboard-container {
+      display: flex;
+      height: 100vh;
+    }
+
     .sidebar {
       background-color: #b00020;
       color: white;
@@ -15,24 +23,33 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
     }
+
     .sidebar a {
       color: white;
       text-decoration: none;
       padding: 15px 20px;
       display: block;
     }
-    .sidebar a:hover, .sidebar .active {
+
+    .sidebar a:hover,
+    .sidebar .active {
       background-color: #900018;
     }
+
     .logout {
       padding: 15px 20px;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="d-flex">
+  <div class="dashboard-container">
+    <!-- Sidebar -->
     <div class="sidebar">
       <div>
         <h4 class="text-center mt-4 mb-2">TUPARK</h4>
@@ -40,18 +57,17 @@
         <a href="present.html" class="active">Present Guests</a>
         <a href="logs.html">Daily Logs</a>
       </div>
-      <a href="index.html" class="logout">Logout</a>
+      <div class="mt-auto">
+        <a href="index.html" class="logout">Logout</a>
+      </div>
     </div>
-    <div class="container mt-4">
+
+    <!-- Main Content -->
+    <div class="content container-fluid">
       <h3>Present Guests</h3>
       <table class="table table-bordered bg-white">
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Plate Number</th>
-            <th>RFID UID</th>
-            <th>Time In</th>
-          </tr>
+          <tr><th>Name</th><th>Plate Number</th><th>RFID UID</th><th>Time In</th></tr>
         </thead>
         <tbody id="presentTable"></tbody>
       </table>
@@ -62,17 +78,19 @@
     const userRole = sessionStorage.getItem("role");
     if (!userRole) window.location.href = "index.html";
 
-    fetch("/api/users")
+    fetch("/api/users/active")
       .then(res => res.json())
       .then(data => {
         const table = document.getElementById("presentTable");
-        data.filter(user => user.status === "ACTIVE").forEach(user => {
-          table.innerHTML += `<tr>
-            <td>${user.name}</td>
-            <td>${user.plate_number}</td>
-            <td>${user.rfid_uid}</td>
-            <td>${new Date(user.time_in).toLocaleTimeString()}</td>
-          </tr>`;
+        data.forEach(user => {
+          const timeIn = new Date(user.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          table.innerHTML += `
+            <tr>
+              <td>${user.name}</td>
+              <td>${user.plate_number}</td>
+              <td>${user.rfid_uid}</td>
+              <td>${timeIn}</td>
+            </tr>`;
         });
       });
   </script>
