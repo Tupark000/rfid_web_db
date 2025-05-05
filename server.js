@@ -8,12 +8,12 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Middleware
+// ===== MIDDLEWARE =====
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public"))); // Serve static frontend files
 
-// MySQL connection
+// ===== MYSQL DATABASE CONNECTION =====
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT || 3306,
@@ -30,7 +30,7 @@ db.connect((err) => {
   }
 });
 
-// Login API
+// ===== LOGIN API =====
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
   const sql = "SELECT * FROM admins WHERE email = ? AND password = ?";
@@ -43,12 +43,12 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-// Root check for Railway 502 fix
+// ===== ROOT ROUTE (FIX FOR RAILWAY) =====
 app.get("/", (req, res) => {
-  res.send("🚀 TUPARK Web Server is running!");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Start server on Railway
+// ===== START SERVER =====
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server is listening on http://0.0.0.0:${PORT}`);
 });
