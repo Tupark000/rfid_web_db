@@ -1,16 +1,13 @@
+<!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body {
-      background-color: #f4f6f9;
-      margin: 0;
-    }
-
+    body { background-color: #f4f6f9; }
     .sidebar {
       background-color: #b00020;
       color: white;
@@ -19,96 +16,50 @@
       display: flex;
       flex-direction: column;
     }
-
     .sidebar a {
       color: white;
       text-decoration: none;
       padding: 15px 20px;
       display: block;
     }
-
-    .sidebar a:hover,
-    .sidebar .active {
+    .sidebar a:hover, .sidebar .active {
       background-color: #900018;
     }
-
     .logout {
+      margin-top: auto;
       padding: 15px 20px;
-    }
-
-    .content {
-      flex: 1;
-      padding: 20px;
-    }
-
-    .dashboard-container {
-      display: flex;
-      height: 100vh;
-    }
-
-    .card h5 {
-      font-size: 1rem;
-    }
-
-    .card h4 {
-      font-size: 1.25rem;
     }
   </style>
 </head>
 <body>
-  <div class="dashboard-container">
-    <!-- Sidebar -->
+  <div class="d-flex">
     <div class="sidebar">
-      <div>
-        <h4 class="text-center mt-4 mb-2">TUPARK</h4>
-        <a href="dashboard.html" class="active">Dashboard</a>
-        <a href="present.html">Present Guests</a>
-        <a href="logs.html">Daily Logs</a>
-        <a href="add_admin.html" id="addAdminLink" style="display: none;">Add Admin</a>
-
-      </div>
-      <div class="mt-auto">
-        <a href="index.html" class="logout">Logout</a>
-      </div>
+      <h4 class="text-center mt-4 mb-2">TUPARK</h4>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="present.html">Present Guests</a>
+      <a href="logs.html">Daily Logs</a>
+      <a href="add_admin.html" id="addAdminLink" style="display:none;">Add Admin</a>
+      <a href="index.html" class="logout">Logout</a>
     </div>
-
-    <!-- Main Content -->
-    <div class="content container-fluid">
+    <div class="container mt-4">
       <h3>Welcome!</h3>
       <div class="row mb-4">
-        <div class="col-md-4">
-          <div class="card"><div class="card-body">
-            <h5>Total Guests Today</h5>
-            <h4 id="totalGuests">0</h4>
-          </div></div>
-        </div>
-        <div class="col-md-4">
-          <div class="card"><div class="card-body">
-            <h5>Active Entries</h5>
-            <h4 id="activeEntries">0</h4>
-          </div></div>
-        </div>
-        <div class="col-md-4">
-          <div class="card"><div class="card-body">
-            <h5>Exited Vehicles</h5>
-            <h4 id="exitedVehicles">0</h4>
-          </div></div>
-        </div>
+        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Total Guests Today</h5><h4 id="totalGuests">0</h4></div></div></div>
+        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Active Entries</h5><h4 id="activeEntries">0</h4></div></div></div>
+        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Exited Vehicles</h5><h4 id="exitedVehicles">0</h4></div></div></div>
       </div>
-
       <h5>Latest Activity</h5>
       <table class="table table-bordered bg-white">
-        <thead>
-          <tr><th>Name</th><th>Status</th><th>Plate</th><th>RFID UID</th><th>Time</th></tr>
-        </thead>
+        <thead><tr><th>Name</th><th>Status</th><th>Plate</th><th>RFID UID</th><th>Time</th></tr></thead>
         <tbody id="activityTable"></tbody>
       </table>
     </div>
   </div>
 
   <script>
-    const userRole = sessionStorage.getItem("role");
-    if (!userRole) window.location.href = "index.html";
+    const role = sessionStorage.getItem('role');
+    if (!role) window.location.href = 'index.html';
+    if (role === 'main') document.getElementById('addAdminLink').style.display = 'block';
 
     fetch("/api/users")
       .then(res => res.json())
@@ -119,24 +70,11 @@
         data.forEach(user => {
           if (user.status === "ACTIVE") active++;
           else exited++;
-          const timeInFormatted = new Date(user.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-          table.innerHTML += `
-            <tr>
-              <td>${user.name}</td>
-              <td>${user.status}</td>
-              <td>${user.plate_number}</td>
-              <td>${user.rfid_uid}</td>
-              <td>${timeInFormatted}</td>
-            </tr>
-          `;
+          table.innerHTML += `<tr><td>${user.name}</td><td>${user.status}</td><td>${user.plate_number}</td><td>${user.rfid_uid}</td><td>${new Date(user.time_in).toLocaleTimeString()}</td></tr>`;
         });
         document.getElementById("activeEntries").textContent = active;
         document.getElementById("exitedVehicles").textContent = exited;
       });
-      const role = sessionStorage.getItem('role');
-            if (role === 'main') {
-            document.getElementById('addAdminLink').style.display = 'block';
-            }
   </script>
 </body>
 </html>

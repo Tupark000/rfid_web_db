@@ -60,22 +60,28 @@ app.delete("/api/users/:id", (req, res) => {
   });
 });
 
+
+// ADD admin
 app.post("/api/admins", (req, res) => {
   const { name, age, email, password, role } = req.body;
 
-  const query = `
-    INSERT INTO admins (name, age, email, password, role)
-    VALUES (?, ?, ?, ?, ?)
-  `;
+  // Validation check
+  if (!name || !age || !email || !password || !role) {
+    return res.status(400).json({ success: false, message: "All fields are required." });
+  }
 
-  db.query(query, [name, age, email, password, role], (err, result) => {
+  const sql = "INSERT INTO admins (name, age, email, password, role) VALUES (?, ?, ?, ?, ?)";
+  db.query(sql, [name, age, email, password, role], (err, result) => {
     if (err) {
-      console.error("Failed to insert admin:", err);
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.status(409).json({ success: false, message: "Email already exists." });
+      }
       return res.status(500).json({ success: false, message: "Database error." });
     }
     res.json({ success: true });
   });
 });
+
 
 
 
