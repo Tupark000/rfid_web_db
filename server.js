@@ -43,6 +43,25 @@ app.post("/api/login", (req, res) => {
   });
 });
 
+// Fetch all users from the users table
+app.get("/api/users", (req, res) => {
+  db.query("SELECT * FROM users", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// DELETE user by ID
+app.delete("/api/users/:id", (req, res) => {
+  const id = req.params.id;
+  db.query("DELETE FROM users WHERE id = ?", [id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ success: true });
+  });
+});
+
+
+
 // ===== ROOT ROUTE (FIX FOR RAILWAY) =====
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
