@@ -1,0 +1,9 @@
+# Ignore environment variables
+.env
+
+# Ignore dependencies (will be installed via package.json)
+node_modules/
+
+# Optional: ignore system files
+.DS_Store
+Thumbs.db
