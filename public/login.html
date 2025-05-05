@@ -46,7 +46,7 @@
             return;
           }
 
-          localStorage.setItem('userRole', result.role);
+          sessionStorage.setItem('role', result.role);
           window.location.href = 'dashboard.html';
         } else {
           alert('Invalid credentials');

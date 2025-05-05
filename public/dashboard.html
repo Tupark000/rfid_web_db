@@ -1,4 +1,3 @@
-<!-- save as public/dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,6 +24,7 @@
     }
     .logout { position: absolute; bottom: 20px; left: 20px; }
     .card-title { font-size: 1rem; }
+    .table thead { background-color: #b00020; color: white; }
   </style>
 </head>
 <body>
@@ -34,25 +34,49 @@
       <a href="dashboard.html" class="active">Dashboard</a>
       <a href="present.html">Present Guests</a>
       <a href="logs.html">Daily Logs</a>
-      <a href="index.html" class="logout">Logout</a>
+      <a href="#" class="logout" onclick="logout()">Logout</a>
     </div>
-    <div class="container-fluid mt-4">
+
+    <main class="container-fluid mt-4">
       <h3>Welcome!</h3>
       <div class="row mb-4">
-        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Total Guests Today</h5><h4 id="totalGuests">0</h4></div></div></div>
-        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Active Entries</h5><h4 id="activeEntries">0</h4></div></div></div>
-        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Exited Vehicles</h5><h4 id="exitedVehicles">0</h4></div></div></div>
+        <div class="col-md-4">
+          <div class="card"><div class="card-body"><h5>Total Guests Today</h5><h4 id="totalGuests">0</h4></div></div>
+        </div>
+        <div class="col-md-4">
+          <div class="card"><div class="card-body"><h5>Active Entries</h5><h4 id="activeEntries">0</h4></div></div>
+        </div>
+        <div class="col-md-4">
+          <div class="card"><div class="card-body"><h5>Exited Vehicles</h5><h4 id="exitedVehicles">0</h4></div></div>
+        </div>
       </div>
+
       <h5>Latest Activity</h5>
       <table class="table table-bordered bg-white">
-        <thead><tr><th>Name</th><th>Status</th><th>Plate</th><th>RFID UID</th><th>Time</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Plate</th>
+            <th>RFID UID</th>
+            <th>Time</th>
+          </tr>
+        </thead>
         <tbody id="activityTable"></tbody>
       </table>
-    </div>
+    </main>
   </div>
+
   <script>
     const userRole = sessionStorage.getItem("role");
-    if (!userRole) window.location.href = "index.html";
+    if (!userRole || (userRole !== "admin" && userRole !== "main")) {
+      window.location.href = "index.html";
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
 
     fetch("/api/users")
       .then(res => res.json())
@@ -63,7 +87,14 @@
         data.forEach(user => {
           if (user.status === "ACTIVE") active++;
           else exited++;
-          table.innerHTML += `<tr><td>${user.name}</td><td>${user.status}</td><td>${user.plate_number}</td><td>${user.rfid_uid}</td><td>${new Date(user.time_in).toLocaleTimeString()}</td></tr>`;
+          table.innerHTML += `
+            <tr>
+              <td>${user.name}</td>
+              <td>${user.status}</td>
+              <td>${user.plate_number}</td>
+              <td>${user.rfid_uid}</td>
+              <td>${new Date(user.time_in).toLocaleTimeString()}</td>
+            </tr>`;
         });
         document.getElementById("activeEntries").textContent = active;
         document.getElementById("exitedVehicles").textContent = exited;
