@@ -1,4 +1,4 @@
-<!-- present.html -->
+<!-- public/present.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,8 +44,17 @@
     <div class="container mt-4">
       <h3>Present Guests</h3>
       <table class="table table-bordered bg-white">
-        <thead><tr><th>Name</th><th>Plate Number</th><th>RFID UID</th><th>Time In</th></tr></thead>
-        <tbody id="presentTable"></tbody>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Plate Number</th>
+            <th>RFID UID</th>
+            <th>Time In</th>
+          </tr>
+        </thead>
+        <tbody id="presentTable">
+          <tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
@@ -54,24 +63,32 @@
     const role = sessionStorage.getItem('role');
     if (!role) window.location.href = 'index.html';
     if (role === 'main') document.getElementById('addAdminLink').style.display = 'block';
-    
-            fetch("/api/users/active")
-        .then(res => res.json())
-        .then(data => {
-            const table = document.getElementById("presentTable");
-            table.innerHTML = ""; // Clear previous data
-            data.forEach(user => {
-            const time = new Date(user.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            table.innerHTML += `
-                <tr>
-                <td>${user.name}</td>
-                <td>${user.plate_number}</td>
-                <td>${user.rfid_uid}</td>
-                <td>${time}</td>
-                </tr>`;
-            });
-        });
 
+    fetch("/api/users/active")
+      .then(res => res.json())
+      .then(data => {
+        const table = document.getElementById("presentTable");
+        table.innerHTML = "";
+        if (data.length === 0) {
+          table.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No active users today.</td></tr>`;
+          return;
+        }
+
+        data.forEach(user => {
+          const time = new Date(user.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          table.innerHTML += `
+            <tr>
+              <td>${user.name}</td>
+              <td>${user.plate_number}</td>
+              <td>${user.rfid_uid}</td>
+              <td>${time}</td>
+            </tr>`;
+        });
+      })
+      .catch(err => {
+        document.getElementById("presentTable").innerHTML = `<tr><td colspan="4" class="text-danger text-center">Failed to load data.</td></tr>`;
+        console.error("Fetch error:", err);
+      });
   </script>
 </body>
 </html>
