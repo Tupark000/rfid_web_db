@@ -51,6 +51,19 @@ app.get("/api/users", (req, res) => {
   });
 });
 
+// Fetch active users
+app.get("/api/users/active", (req, res) => {
+  const sql = "SELECT * FROM users WHERE status = 'ACTIVE' AND DATE(time_in) = CURDATE()";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Failed to fetch active users:", err);
+      return res.status(500).json({ success: false, message: "Database error" });
+    }
+    res.json(results);
+  });
+});
+
+
 // DELETE user by ID
 app.delete("/api/users/:id", (req, res) => {
   const id = req.params.id;

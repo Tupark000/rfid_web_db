@@ -54,15 +54,24 @@
     const role = sessionStorage.getItem('role');
     if (!role) window.location.href = 'index.html';
     if (role === 'main') document.getElementById('addAdminLink').style.display = 'block';
-
-    fetch("/api/users/active")
-      .then(res => res.json())
-      .then(data => {
-        const table = document.getElementById("presentTable");
-        data.forEach(user => {
-          table.innerHTML += `<tr><td>${user.name}</td><td>${user.plate_number}</td><td>${user.rfid_uid}</td><td>${new Date(user.time_in).toLocaleTimeString()}</td></tr>`;
+    
+            fetch("/api/users/active")
+        .then(res => res.json())
+        .then(data => {
+            const table = document.getElementById("presentTable");
+            table.innerHTML = ""; // Clear previous data
+            data.forEach(user => {
+            const time = new Date(user.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            table.innerHTML += `
+                <tr>
+                <td>${user.name}</td>
+                <td>${user.plate_number}</td>
+                <td>${user.rfid_uid}</td>
+                <td>${time}</td>
+                </tr>`;
+            });
         });
-      });
+
   </script>
 </body>
 </html>
