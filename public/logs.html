@@ -38,16 +38,28 @@
     }
 
     @media print {
-      .no-print,
-      .sidebar {
+    .no-print, .sidebar {
         display: none !important;
-      }
-      .container {
+    }
+
+    .container {
         margin: 0;
         padding: 0;
         width: 100%;
-      }
     }
+
+    table {
+        width: 100% !important;
+        table-layout: auto;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 8px;
+        font-size: 14px;
+    }
+    }
+
   </style>
 </head>
 <body>
