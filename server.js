@@ -57,7 +57,7 @@ app.get("/api/users", (req, res) => {
 
 // Fetch active users
 app.get("/api/users/active", (req, res) => {
-  const sql = "SELECT * FROM users WHERE status = 'ACTIVE' AND DATE(time_in) = CURDATE() ORDER BY time_in DESC";
+  const sql = "SELECT * FROM users WHERE status = 'ACTIVE' ORDER BY time_in DESC";
   db.query(sql, (err, results) => {
     if (err) {
       console.error("Failed to fetch active users:", err);

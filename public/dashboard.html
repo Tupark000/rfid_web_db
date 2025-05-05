@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Dashboard</title>
+  <title>Dashboard - Active Entries</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body { background-color: #f4f6f9; }
+
     .sidebar {
       background-color: #b00020;
       min-height: 100vh;
@@ -15,15 +16,18 @@
       display: flex;
       flex-direction: column;
     }
+
     .sidebar a {
       color: white;
       text-decoration: none;
       padding: 15px 20px;
       display: block;
     }
+
     .sidebar a:hover, .sidebar .active {
       background-color: #900018;
     }
+
     .logout {
       margin-top: auto;
       padding: 15px 20px;
@@ -67,17 +71,17 @@
     .then(res => res.json())
     .then(data => {
       const table = document.getElementById("activeTable");
-      table.innerHTML = '';
+      table.innerHTML = "";
       data.forEach(user => {
-        const time = new Date(user.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const vehicle = user.vehicle_type || '-';
+        const timeIn = new Date(user.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const vehicle = user.vehicle_type || "-";
         table.innerHTML += `
           <tr>
             <td>${user.name}</td>
             <td>${user.plate_number}</td>
             <td>${vehicle}</td>
             <td>${user.rfid_uid}</td>
-            <td>${time}</td>
+            <td>${timeIn}</td>
           </tr>`;
       });
     });
