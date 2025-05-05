@@ -7,7 +7,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body { background-color: #f4f6f9; }
-
     .sidebar {
       background-color: #b00020;
       min-height: 100vh;
@@ -16,27 +15,22 @@
       display: flex;
       flex-direction: column;
     }
-
     .sidebar a {
       color: white;
       text-decoration: none;
       padding: 15px 20px;
       display: block;
     }
-
     .sidebar a:hover, .sidebar .active {
       background-color: #900018;
     }
-
     .logout {
       margin-top: auto;
       padding: 15px 20px;
     }
-
     .signature {
       margin-top: 40px;
     }
-
     @media print {
       .no-print,
       .sidebar {
@@ -69,7 +63,7 @@
       <button class="btn btn-secondary" onclick="window.print()">Print</button>
     </div>
 
-    <p><strong>Printed By (Admin):</strong> <span id="printedBy"></span></p>
+    <p><strong>Printed By:</strong> <span id="printedBy"></span></p>
     <p><strong>Print Date:</strong> <span id="printDate"></span></p>
 
     <table class="table table-bordered bg-white">
@@ -95,11 +89,11 @@
 
 <script>
   const role = sessionStorage.getItem('role');
-  const currentUserName = sessionStorage.getItem('username') || 'Admin';
+  const currentUser = sessionStorage.getItem('username') || 'MAIN ADMIN';
   if (!role) window.location.href = 'index.html';
   if (role === 'main') document.getElementById('addAdminLink').style.display = 'block';
 
-  document.getElementById('printedBy').textContent = currentUserName;
+  document.getElementById('printedBy').textContent = currentUser;
   document.getElementById('printDate').textContent = new Date().toLocaleString();
 
   let allUsers = [];
