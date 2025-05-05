@@ -60,6 +60,23 @@ app.delete("/api/users/:id", (req, res) => {
   });
 });
 
+app.post("/api/admins", (req, res) => {
+  const { name, age, email, password, role } = req.body;
+
+  const query = `
+    INSERT INTO admins (name, age, email, password, role)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.query(query, [name, age, email, password, role], (err, result) => {
+    if (err) {
+      console.error("Failed to insert admin:", err);
+      return res.status(500).json({ success: false, message: "Database error." });
+    }
+    res.json({ success: true });
+  });
+});
+
 
 
 // ===== ROOT ROUTE (FIX FOR RAILWAY) =====

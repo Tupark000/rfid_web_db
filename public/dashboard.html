@@ -64,6 +64,8 @@
         <a href="dashboard.html" class="active">Dashboard</a>
         <a href="present.html">Present Guests</a>
         <a href="logs.html">Daily Logs</a>
+        <a href="add_admin.html" id="addAdminLink" style="display: none;">Add Admin</a>
+
       </div>
       <div class="mt-auto">
         <a href="index.html" class="logout">Logout</a>
@@ -131,6 +133,10 @@
         document.getElementById("activeEntries").textContent = active;
         document.getElementById("exitedVehicles").textContent = exited;
       });
+      const role = sessionStorage.getItem('role');
+            if (role === 'main') {
+            document.getElementById('addAdminLink').style.display = 'block';
+            }
   </script>
 </body>
 </html>

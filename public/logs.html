@@ -56,6 +56,8 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="present.html">Present Guests</a>
         <a href="logs.html" class="active">Daily Logs</a>
+        <a href="add_admin.html" id="addAdminLink" style="display: none;">Add Admin</a>
+
       </div>
       <div class="mt-auto">
         <a href="index.html" class="logout">Logout</a>
@@ -82,9 +84,13 @@
   </div>
 
   <script>
-    const role = sessionStorage.getItem("role");
-    if (!role) window.location.href = "index.html";
+        const role = sessionStorage.getItem('role');
+        if (!role) window.location.href = "index.html";
 
+        if (role === 'main') {
+        document.getElementById('addAdminLink').style.display = 'block';
+        }
+        
     let allUsers = [];
 
     fetch("/api/users")
@@ -129,6 +135,7 @@
       });
       renderTable(filtered);
     }
+
   </script>
 </body>
 </html>
