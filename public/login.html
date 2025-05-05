@@ -40,15 +40,18 @@
         const result = await response.json();
 
         if (result.success) {
-          // Check if role from backend matches the selected login type
-          if (result.role !== selectedRole) {
-            alert('Login type mismatch. Please use the correct login link.');
-            return;
-          }
+            if (result.role !== selectedRole) {
+                alert('Login type mismatch. Please use the correct login link.');
+                return;
+            }
 
-          sessionStorage.setItem('role', result.role);
-          window.location.href = 'dashboard.html';
-        } else {
+            // 🔧 Fix: Add this line to store email in session
+            sessionStorage.setItem('email', email);        // 🔴 Add this line
+            sessionStorage.setItem('role', result.role);
+
+            window.location.href = 'dashboard.html';
+            }
+            else {
           alert('Invalid credentials');
         }
       } catch (err) {
