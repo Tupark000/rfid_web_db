@@ -27,14 +27,13 @@
   </style>
 </head>
 <body>
-  <div class="d-flex">
-    <div class="sidebar d-flex flex-column position-relative">
-      <h4 class="text-center mt-4 mb-2">TUPARK</h4>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="present.html">Present Guests</a>
-      <a href="logs.html" class="active">Daily Logs</a>
-      <a href="#" class="logout" onclick="logout()">Logout</a>
-    </div>
+    <div class="d-flex mb-3">
+        <input type="date" id="filterDate" class="form-control w-auto me-2">
+        <input type="text" id="searchInput" placeholder="Search by name or plate..." class="form-control w-auto me-2">
+        <button class="btn btn-secondary me-2" onclick="applyFilters()">Filter</button>
+        <button class="btn btn-danger" onclick="window.print()">Print</button>
+      </div>
+      
 
     <div class="container mt-4">
       <h3>Daily Logs</h3>
@@ -56,45 +55,50 @@
   </div>
 
   <script>
-    const role = sessionStorage.getItem("role");
-    if (!role || (role !== "admin" && role !== "main")) {
-      window.location.href = "index.html";
-    }
-
-    function logout() {
-      sessionStorage.clear();
-      window.location.href = "index.html";
-    }
-
-    fetch("/api/users")
-      .then(res => res.json())
-      .then(data => {
+        const role = sessionStorage.getItem("role");
+        if (!role) window.location.href = "index.html";
+    
+        let allLogs = [];
+    
+        function renderTable(data) {
         const table = document.getElementById("logsTable");
+        table.innerHTML = '';
         data.forEach(user => {
-          const timeIn = new Date(user.time_in).toLocaleString();
-          const timeOut = user.time_out ? new Date(user.time_out).toLocaleString() : "-";
-
-          let actions = "";
-          if (role === "main") {
-            actions = `
-              <button class="btn btn-warning btn-sm me-1">Edit</button>
-              <button class="btn btn-danger btn-sm">Delete</button>`;
-          } else {
-            actions = `<button class="btn btn-outline-secondary btn-sm" disabled>View</button>`;
-          }
-
-          table.innerHTML += `
+            const timeIn = new Date(user.time_in).toLocaleString();
+            const timeOut = user.time_out ? new Date(user.time_out).toLocaleString() : "-";
+            const actions = role === "main"
+            ? `<button class="btn btn-warning btn-sm me-1">Edit</button><button class="btn btn-danger btn-sm">Delete</button>`
+            : `<button class="btn btn-outline-secondary btn-sm" disabled>View</button>`;
+            table.innerHTML += `
             <tr>
-              <td>${user.name}</td>
-              <td>${user.status}</td>
-              <td>${user.plate_number}</td>
-              <td>${user.rfid_uid}</td>
-              <td>${timeIn}</td>
-              <td>${timeOut}</td>
-              <td>${actions}</td>
+                <td>${user.name}</td>
+                <td>${user.status}</td>
+                <td>${user.plate_number}</td>
+                <td>${user.rfid_uid}</td>
+                <td>${timeIn}</td>
+                <td>${timeOut}</td>
+                <td>${actions}</td>
             </tr>`;
         });
-      });
-  </script>
+        }
+    
+        function applyFilters() {
+        const date = document.getElementById("filterDate").value;
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const filtered = allLogs.filter(user => {
+            const matchDate = !date || new Date(user.time_in).toISOString().startsWith(date);
+            const matchSearch = !search || user.name.toLowerCase().includes(search) || user.plate_number.toLowerCase().includes(search);
+            return matchDate && matchSearch;
+        });
+        renderTable(filtered);
+        }
+    
+        fetch("/api/users")
+        .then(res => res.json())
+        .then(data => {
+            allLogs = data;
+            renderTable(data);
+        });
+    </script>
 </body>
 </html>
