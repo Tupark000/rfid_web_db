@@ -39,7 +39,11 @@ app.post("/api/login", (req, res) => {
     if (results.length === 0) return res.json({ success: false });
 
     const user = results[0];
-    res.json({ success: true, role: user.role });
+    res.json({ 
+      success: true, 
+      role: user.role,
+      name: user.name // 👈 make sure this exists in your admins table
+    });
   });
 });
 

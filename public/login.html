@@ -47,7 +47,9 @@
           }
 
           sessionStorage.setItem('role', result.role);
+          sessionStorage.setItem('username', result.name); // 👈 store the actual name
           window.location.href = 'dashboard.html';
+
         } else {
           alert('Invalid credentials');
         }

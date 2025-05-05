@@ -69,7 +69,7 @@
       <button class="btn btn-secondary" onclick="window.print()">Print</button>
     </div>
 
-    <p><strong>Printed By:</strong> <span id="printedBy"></span></p>
+    <p><strong>Printed By (Admin):</strong> <span id="printedBy"></span></p>
     <p><strong>Print Date:</strong> <span id="printDate"></span></p>
 
     <table class="table table-bordered bg-white">
@@ -95,11 +95,11 @@
 
 <script>
   const role = sessionStorage.getItem('role');
-  const currentUser = sessionStorage.getItem('username') || 'MAIN ADMIN';
+  const currentUserName = sessionStorage.getItem('username') || 'Admin';
   if (!role) window.location.href = 'index.html';
   if (role === 'main') document.getElementById('addAdminLink').style.display = 'block';
 
-  document.getElementById('printedBy').textContent = currentUser;
+  document.getElementById('printedBy').textContent = currentUserName;
   document.getElementById('printDate').textContent = new Date().toLocaleString();
 
   let allUsers = [];
