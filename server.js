@@ -77,6 +77,27 @@ app.delete("/api/users/:id", (req, res) => {
   });
 });
 
+// UPDATE user details
+app.put("/api/users/:id", (req, res) => {
+  const id = req.params.id;
+  const { name, plate_number, vehicle_type } = req.body;
+
+  if (!name || !plate_number) {
+    return res.status(400).json({ success: false, message: "Name and Plate Number are required." });
+  }
+
+  const sql = "UPDATE users SET name = ?, plate_number = ?, vehicle_type = ? WHERE id = ?";
+  db.query(sql, [name, plate_number, vehicle_type, id], (err, result) => {
+    if (err) {
+      console.error("Update failed:", err.message);
+      return res.status(500).json({ success: false, message: "Database error." });
+    }
+
+    res.json({ success: true });
+  });
+});
+
+
 
 // ADD admin
 app.post("/api/admins", (req, res) => {
