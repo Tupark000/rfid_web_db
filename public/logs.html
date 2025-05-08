@@ -75,6 +75,7 @@
           <th>RFID UID</th>
           <th>Time In</th>
           <th>Time Out</th>
+          <th class="no-print">Actions</th>
         </tr>
       </thead>
       <tbody id="logsTable"></tbody>
@@ -105,6 +106,10 @@
       const timeIn = new Date(user.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const timeOut = user.time_out ? new Date(user.time_out).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-";
       const vehicle = user.vehicle_type || "-";
+      const actionButtons = role === "main"
+        ? `<button class="btn btn-warning btn-sm me-1 no-print">Edit</button>
+           <button class="btn btn-danger btn-sm no-print">Delete</button>`
+        : `<button class="btn btn-outline-secondary btn-sm no-print" disabled>View</button>`;
       table.innerHTML += `
         <tr>
           <td>${user.name}</td>
@@ -113,6 +118,7 @@
           <td>${user.rfid_uid}</td>
           <td>${timeIn}</td>
           <td>${timeOut}</td>
+          <td>${actionButtons}</td>
         </tr>`;
     });
   }
