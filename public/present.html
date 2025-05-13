@@ -79,6 +79,7 @@
 </body>
 </html> -->
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -125,7 +126,9 @@
   <div class="container mt-4">
     <h3>Present Guests</h3>
     <table class="table table-bordered bg-white">
-      <thead><tr><th>Name</th><th>Plate Number</th><th>Vehicle Type</th><th>RFID UID</th><th>Time In</th></tr></thead>
+      <thead>
+        <tr><th>Name</th><th>Plate Number</th><th>Vehicle Type</th><th>RFID UID</th><th>Time In</th></tr>
+      </thead>
       <tbody id="presentTable"></tbody>
     </table>
   </div>
@@ -142,9 +145,16 @@
       const table = document.getElementById("presentTable");
       table.innerHTML = '';
       data.forEach(user => {
-        const timeIn = new Date(user.time_in).toLocaleString('en-PH', { timeZone: 'Asia/Manila' });
+        const time = new Date(user.time_in).toLocaleString("en-PH", { timeZone: "Asia/Manila" });
         const vehicle = user.vehicle_type || '-';
-        table.innerHTML += `<tr><td>${user.name}</td><td>${user.plate_number}</td><td>${vehicle}</td><td>${user.rfid_uid}</td><td>${timeIn}</td></tr>`;
+        table.innerHTML += `
+          <tr>
+            <td>${user.name}</td>
+            <td>${user.plate_number}</td>
+            <td>${vehicle}</td>
+            <td>${user.rfid_uid}</td>
+            <td>${time}</td>
+          </tr>`;
       });
     });
 </script>
