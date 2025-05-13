@@ -189,6 +189,7 @@
 </body>
 </html> -->
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -233,10 +234,6 @@
         width: 100%;
       }
     }
-    td, th {
-      vertical-align: middle;
-      font-size: 14px;
-    }
   </style>
 </head>
 <body>
@@ -262,7 +259,7 @@
     <p><strong>Print Date:</strong> <span id="printDate"></span></p>
 
     <table class="table table-bordered bg-white">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>Name</th>
           <th>Plate No</th>
@@ -290,23 +287,16 @@
   if (role === 'main') document.getElementById('addAdminLink').style.display = 'block';
 
   document.getElementById('printedBy').textContent = currentUser;
-  document.getElementById('printDate').textContent = new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" });
+  document.getElementById('printDate').textContent = new Date().toLocaleString();
 
   let allUsers = [];
-
-  function formatDateTime(raw) {
-    if (!raw) return "-";
-    const d = new Date(raw);
-    const pad = (n) => n.toString().padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  }
 
   function renderTable(data) {
     const table = document.getElementById("logsTable");
     table.innerHTML = '';
     data.forEach(user => {
-      const timeIn = formatDateTime(user.time_in);
-      const timeOut = formatDateTime(user.time_out);
+      const timeIn = user.time_in || "-";
+      const timeOut = user.time_out || "-";
       const vehicle = user.vehicle_type || "-";
 
       let actionButtons = "";
@@ -332,13 +322,14 @@
 
   function filterLogs() {
     const selectedDate = new Date(document.getElementById("filterDate").value);
-    const selectedDateOnly = selectedDate.toISOString().split('T')[0];
-    const filtered = allUsers.filter(user => user.time_in && user.time_in.startsWith(selectedDateOnly));
+    const selectedDateStr = selectedDate.toISOString().split("T")[0];
+    const filtered = allUsers.filter(user => user.time_in && user.time_in.startsWith(selectedDateStr));
     renderTable(filtered);
   }
 
   function deleteUser(id) {
     if (!confirm("Are you sure you want to delete this record?")) return;
+
     fetch(`/api/users/${id}`, { method: 'DELETE' })
       .then(res => res.json())
       .then(response => {
@@ -368,7 +359,8 @@
       .then(response => {
         if (response.success) {
           alert("Record updated successfully.");
-          allUsers = allUsers.map(u => u.id === id ? { ...u, name: newName, plate_number: newPlate, vehicle_type: newVehicle } : u);
+          const updated = allUsers.map(u => u.id === id ? { ...u, name: newName, plate_number: newPlate, vehicle_type: newVehicle } : u);
+          allUsers = updated;
           renderTable(allUsers);
         } else {
           alert("Failed to update record.");
