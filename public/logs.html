@@ -189,7 +189,6 @@
 </body>
 </html> -->
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -234,6 +233,10 @@
         width: 100%;
       }
     }
+    td, th {
+      vertical-align: middle;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -259,7 +262,7 @@
     <p><strong>Print Date:</strong> <span id="printDate"></span></p>
 
     <table class="table table-bordered bg-white">
-      <thead>
+      <thead class="table-light">
         <tr>
           <th>Name</th>
           <th>Plate No</th>
@@ -291,12 +294,19 @@
 
   let allUsers = [];
 
+  function formatDateTime(raw) {
+    if (!raw) return "-";
+    const d = new Date(raw);
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
   function renderTable(data) {
     const table = document.getElementById("logsTable");
     table.innerHTML = '';
     data.forEach(user => {
-      const timeIn = user.time_in || "-";
-      const timeOut = user.time_out || "-";
+      const timeIn = formatDateTime(user.time_in);
+      const timeOut = formatDateTime(user.time_out);
       const vehicle = user.vehicle_type || "-";
 
       let actionButtons = "";
@@ -322,18 +332,13 @@
 
   function filterLogs() {
     const selectedDate = new Date(document.getElementById("filterDate").value);
-    const selectedDateOnly = selectedDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-
-    const filtered = allUsers.filter(user => {
-      return user.time_in && user.time_in.startsWith(selectedDateOnly);
-    });
-
+    const selectedDateOnly = selectedDate.toISOString().split('T')[0];
+    const filtered = allUsers.filter(user => user.time_in && user.time_in.startsWith(selectedDateOnly));
     renderTable(filtered);
   }
 
   function deleteUser(id) {
     if (!confirm("Are you sure you want to delete this record?")) return;
-
     fetch(`/api/users/${id}`, { method: 'DELETE' })
       .then(res => res.json())
       .then(response => {
