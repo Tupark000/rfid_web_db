@@ -291,12 +291,18 @@
 
   let allUsers = [];
 
+  function beautifyDatetime(datetimeStr) {
+    if (!datetimeStr) return "-";
+    const [date, time] = datetimeStr.split(' ');
+    return `${date} ${time}`;
+  }
+
   function renderTable(data) {
     const table = document.getElementById("logsTable");
     table.innerHTML = '';
     data.forEach(user => {
-      const timeIn = user.time_in || "-";
-      const timeOut = user.time_out || "-";
+      const timeIn = beautifyDatetime(user.time_in);
+      const timeOut = beautifyDatetime(user.time_out);
       const vehicle = user.vehicle_type || "-";
 
       let actionButtons = "";
@@ -322,8 +328,10 @@
 
   function filterLogs() {
     const selectedDate = new Date(document.getElementById("filterDate").value);
-    const selectedDateStr = selectedDate.toISOString().split("T")[0];
-    const filtered = allUsers.filter(user => user.time_in && user.time_in.startsWith(selectedDateStr));
+    const filtered = allUsers.filter(user => {
+      const dateIn = new Date(user.time_in);
+      return dateIn.toDateString() === selectedDate.toDateString();
+    });
     renderTable(filtered);
   }
 
