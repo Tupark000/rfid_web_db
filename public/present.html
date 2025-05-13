@@ -79,6 +79,7 @@
 </body>
 </html> -->
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -144,14 +145,15 @@
       const table = document.getElementById("presentTable");
       table.innerHTML = '';
       data.forEach(user => {
-        const vehicle = user.vehicle_type || '-';
+        const time = user.time_in.replace('T', ' ').replace('.000Z', '');
+        const vehicle = user.vehicle_type || "-";
         table.innerHTML += `
           <tr>
             <td>${user.name}</td>
             <td>${user.plate_number}</td>
             <td>${vehicle}</td>
             <td>${user.rfid_uid}</td>
-            <td>${user.time_in}</td>
+            <td>${time}</td>
           </tr>`;
       });
     });
