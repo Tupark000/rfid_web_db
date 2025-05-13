@@ -292,10 +292,13 @@
   let allUsers = [];
 
   function beautifyDatetime(datetimeStr) {
-    if (!datetimeStr) return "-";
-    const [date, time] = datetimeStr.split(' ');
-    return `${date} ${time}`;
-  }
+  if (!datetimeStr) return "-";
+  const [datePart, timePart] = datetimeStr.split('T');
+  if (!timePart) return datetimeStr; // fallback
+  const cleanTime = timePart.split('.')[0]; // remove .000Z
+  return `${datePart} ${cleanTime}`;
+}
+
 
   function renderTable(data) {
     const table = document.getElementById("logsTable");
