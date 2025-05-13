@@ -79,7 +79,6 @@
 </body>
 </html> -->
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -145,7 +144,6 @@
       const table = document.getElementById("presentTable");
       table.innerHTML = '';
       data.forEach(user => {
-        const time = new Date(user.time_in).toLocaleString("en-PH", { timeZone: "Asia/Manila" });
         const vehicle = user.vehicle_type || '-';
         table.innerHTML += `
           <tr>
@@ -153,7 +151,7 @@
             <td>${user.plate_number}</td>
             <td>${vehicle}</td>
             <td>${user.rfid_uid}</td>
-            <td>${time}</td>
+            <td>${user.time_in}</td>
           </tr>`;
       });
     });

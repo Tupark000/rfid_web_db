@@ -109,7 +109,6 @@
 </body>
 </html> -->
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -152,16 +151,32 @@
     <a href="add_admin.html" id="addAdminLink" style="display:none;">Add Admin</a>
     <a href="index.html" class="logout">Logout</a>
   </div>
+
   <div class="container mt-4">
     <h3>Welcome!</h3>
     <div class="row mb-4">
-      <div class="col-md-4"><div class="card"><div class="card-body"><h5>Total Guests Today</h5><h4 id="totalGuests">0</h4></div></div></div>
-      <div class="col-md-4"><div class="card"><div class="card-body"><h5>Active Entries</h5><h4 id="activeEntries">0</h4></div></div></div>
-      <div class="col-md-4"><div class="card"><div class="card-body"><h5>Exited Vehicles</h5><h4 id="exitedVehicles">0</h4></div></div></div>
+      <div class="col-md-4">
+        <div class="card"><div class="card-body">
+          <h5>Total Guests Today</h5><h4 id="totalGuests">0</h4>
+        </div></div>
+      </div>
+      <div class="col-md-4">
+        <div class="card"><div class="card-body">
+          <h5>Active Entries</h5><h4 id="activeEntries">0</h4>
+        </div></div>
+      </div>
+      <div class="col-md-4">
+        <div class="card"><div class="card-body">
+          <h5>Exited Vehicles</h5><h4 id="exitedVehicles">0</h4>
+        </div></div>
+      </div>
     </div>
+
     <h5>Latest Activity</h5>
     <table class="table table-bordered bg-white">
-      <thead><tr><th>Name</th><th>Status</th><th>Plate</th><th>Vehicle Type</th><th>RFID UID</th><th>Time</th></tr></thead>
+      <thead>
+        <tr><th>Name</th><th>Status</th><th>Plate</th><th>Vehicle Type</th><th>RFID UID</th><th>Time In</th></tr>
+      </thead>
       <tbody id="activityTable"></tbody>
     </table>
   </div>
@@ -182,7 +197,6 @@
         if (user.status === "ACTIVE") active++;
         else exited++;
         const vehicle = user.vehicle_type || "-";
-        const formattedTime = new Date(user.time_in).toLocaleString("en-PH", { timeZone: "Asia/Manila" });
         table.innerHTML += `
           <tr>
             <td>${user.name}</td>
@@ -190,7 +204,7 @@
             <td>${user.plate_number}</td>
             <td>${vehicle}</td>
             <td>${user.rfid_uid}</td>
-            <td>${formattedTime}</td>
+            <td>${user.time_in}</td>
           </tr>`;
       });
       document.getElementById("activeEntries").textContent = active;
