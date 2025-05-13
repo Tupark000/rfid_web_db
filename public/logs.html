@@ -190,7 +190,6 @@
 </html> -->
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -292,26 +291,12 @@
 
   let allUsers = [];
 
-  function formatDateTime(input) {
-    const date = new Date(input);
-    return date.toLocaleString("en-PH", {
-      timeZone: "Asia/Manila",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false
-    });
-  }
-
   function renderTable(data) {
     const table = document.getElementById("logsTable");
     table.innerHTML = '';
     data.forEach(user => {
-      const timeIn = formatDateTime(user.time_in);
-      const timeOut = user.time_out ? formatDateTime(user.time_out) : "-";
+      const timeIn = user.time_in || "-";
+      const timeOut = user.time_out || "-";
       const vehicle = user.vehicle_type || "-";
 
       let actionButtons = "";
@@ -337,10 +322,12 @@
 
   function filterLogs() {
     const selectedDate = new Date(document.getElementById("filterDate").value);
+    const selectedDateOnly = selectedDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
     const filtered = allUsers.filter(user => {
-      const dateIn = new Date(user.time_in);
-      return dateIn.toDateString() === selectedDate.toDateString();
+      return user.time_in && user.time_in.startsWith(selectedDateOnly);
     });
+
     renderTable(filtered);
   }
 
@@ -376,8 +363,7 @@
       .then(response => {
         if (response.success) {
           alert("Record updated successfully.");
-          const updated = allUsers.map(u => u.id === id ? { ...u, name: newName, plate_number: newPlate, vehicle_type: newVehicle } : u);
-          allUsers = updated;
+          allUsers = allUsers.map(u => u.id === id ? { ...u, name: newName, plate_number: newPlate, vehicle_type: newVehicle } : u);
           renderTable(allUsers);
         } else {
           alert("Failed to update record.");
