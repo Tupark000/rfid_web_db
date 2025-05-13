@@ -183,6 +183,15 @@
 </div>
 
 <script>
+
+  function beautifyDatetime(datetimeStr) {
+  if (!datetimeStr) return "-";
+  const [datePart, timePart] = datetimeStr.split('T');
+  if (!timePart) return datetimeStr; // fallback
+  const cleanTime = timePart.split('.')[0]; // remove .000Z
+  return `${datePart} ${cleanTime}`;
+}
+
   const role = sessionStorage.getItem('role');
   if (!role) window.location.href = 'index.html';
   if (role === 'main') document.getElementById('addAdminLink').style.display = 'block';
